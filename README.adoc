@@ -5,7 +5,7 @@ ifdef::env-github[]
 :caution-caption: :fire:
 :warning-caption: :warning:
 endif::[]
-:sonar-project-id: mortedecai_go-burn-bits
+:sonar-project-id: org_REPO
 :sonar-token: &token={REMOVE_ME_IF_NOT_PRIVATE}
 
 :img-quality-gate: https://sonarcloud.io/api/project_badges/measure?project={sonar-project-id}&metric=alert_status{sonar-token}
@@ -34,8 +34,32 @@ This is a template project to base future projects on with no actual live code o
 
 |===
 
-== Installation
+== Usage
 
-_TBD_
+=== CLI Based
 
+1. Clone this repository: `git clone git@github.com:mortedecai/templated-gopher`
+2. Remove the current remotes: 
+
+=== GH Based
+
+1. On the GitHub UI, click the `New Repository` button.
+2. Set `mortedecai/templated-gopher` as the template repository.
+3. Ensure `Include all branches` is *_NOT_* checked.
+4. Select Private or Public as necessary
+5. Click `Create Repository`
+
+=== Finalization Steps
+
+Once the Repository has been created:
+
+1. Click the repository settings cog.
+2. Select the `Secrets and variables` blade.
+3. Select the `Actions` entry.
+4. Create the appropriate `SONAR_TOKEN` repository token.
+5. Click the `Variables` tab.
+6. Click the `New repository variable`.
+7. Create a `SONAR_ORG` variable equal to the GitHub organization (e.g. `mortedecai`).
+8. Create a `SONAR_PROJECT` variable equal to the <GitHub organization>_<Repository Name> (e.g. `mortedecai_templated-gopher`).
+9. Update the README.adoc file and set the appropriate `sonar-*` values to reflect the sonar badges for project health.
 
