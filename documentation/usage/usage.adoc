@@ -1,3 +1,3 @@
-# Go Burn Bits Usage Documentation
-Mortedecai (github.com/mortedecai)
+= Some Usage Doc
+Username (github.com/user)
 
