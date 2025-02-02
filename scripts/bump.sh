@@ -52,6 +52,10 @@ while getopts "cdhor:sv:" arg; do
       v)
         BUMP_VERSION=${OPTARG}
         ;;
+      *)
+        bump_usage $@
+        exit 1
+        ;;
     esac
 done
 CUR_VERSION=$(git describe --tags --abbrev=0 2> /dev/null)
@@ -140,4 +144,3 @@ else
         echo "git push --tags"
     fi
 fi
-

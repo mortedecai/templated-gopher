@@ -10,12 +10,12 @@ jobs:
     name: Build and check code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
-          go-version: '^1.22'
+          go-version: '^1.23'
       - name: Create Reports
         run: |
           ./project test
@@ -40,14 +40,14 @@ jobs:
             -Dsonar.tests=.
             -Dsonar.test.exclusions=**/vendor/**
             -Dsonar.test.inclusions=**/*_test.go
-            -Dsonar.go.coverage.reportPaths=.reports/coverage.out
+            -Dsonar.go.coverage.reportPaths=.reports/full_coverage.out
             -Dsonar.go.tests.reportPaths=.reports/unit_test.json
 
       - name: Archive Code Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: project-reports
-          path: .reports/
-
-
+          name: reports
+          path: ./.reports/*
+          if-no-files-found: 'error'
+          include-hidden-files: 'true'
 

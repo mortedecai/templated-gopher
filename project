@@ -25,7 +25,7 @@ shift
 run_build() {
     mkdir -p bin/iOS/
     CUR_VERSION=$(./project bump -r ${PROJECT_ROOT} -d -v alpha -s)
-    go build -ldflags="-X 'main.version=${CUR_VERSION}'" -o bin/iOS/gbb ./cmd/gbb/gbb.go
+    go build -ldflags="-X 'main.version=${CUR_VERSION}'" -o bin/iOS/main ./cmd/main/main.go
 }
 
 run_bump() {
@@ -51,9 +51,9 @@ check_and_install_ginkgo() {
 run_test() {
     mkdir -p .reports/
     check_and_install_ginkgo
-    ginkgo --repeat 1 -r --output-dir .reports --json-report unit_tests.json --vv ./... > .reports/unit_tests.log 
+    ginkgo --repeat 1 -r --output-dir .reports --json-report unit_tests.json --vv ./... > .reports/unit_tests.log
     local RESULT=$?
-    tail .reports/unit_tests.log
+    cat .reports/unit_tests.log
     if [ ${RESULT} -ne 0 ]; then
         exit ${RESULT}
     fi
@@ -61,12 +61,26 @@ run_test() {
 
 run_coverage() {
     mkdir -p ${PROJECT_ROOT}/.reports/
-    go test --test.coverprofile .reports/coverage.out ./...
+    go test --test.coverprofile .reports/full_coverage.out ./...
     local RESULT=$?
-    go tool cover -html=.reports/coverage.out -o .reports/coverage.html
+    go tool cover -html=.reports/full_coverage.out -o .reports/full_coverage.html
+    cat .reports/full_coverage.out | grep -v "main" | grep -v "mocks" > .reports/manipulated_coverage.out
+    go tool cover -html=.reports/manipulated_coverage.out -o .reports/manipulated_coverage.html
+    go tool cover -func=.reports/manipulated_coverage.out
     if [ ${RESULT} -ne 0 ]; then
         exit ${RESULT}
     fi
+}
+
+run_docs() {
+  local _docs_dir_=${PROJECT_ROOT}/documentation/
+  local _docs_out_dir_=${PROJECT_ROOT}/docs/
+  local _docs_pdfout_dir_=${PROJECT_ROOT}/docs/pdf/
+
+  mkdir -p ${_docs_pdfout_dir_}
+  # TODO: change usage/usage.adoc to your documentation files.
+  docker run -u $(id -u):$(id -g) -v ${_docs_dir_}:/documents/ -v ${_docs_out_dir_}:/docsout/ asciidoctor/docker-asciidoctor asciidoctor -b html5 -r asciidoctor-diagram usage/usage.adoc -D /docsout/
+  docker run -u $(id -u):$(id -g) -v ${_docs_dir_}:/documents/ -v ${_docs_pdfout_dir_}:/docsout/ asciidoctor/docker-asciidoctor asciidoctor-pdf -r asciidoctor-diagram usage/usage.adoc -D /docsout/
 }
 
 type run_${CMD} > /dev/null
@@ -81,5 +95,4 @@ then
 fi
 
 run_${CMD} $*
-
 
